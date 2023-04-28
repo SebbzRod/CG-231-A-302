@@ -1,5 +1,5 @@
 // Crear geometría personalizada
-var geometry = new THREE.BufferGeometry();
+const geometry = new THREE.BufferGeometry();
 // Definir los vértices del cubo
 var vertices = new Float32Array([
     // Cara frontal
@@ -54,26 +54,36 @@ geometry.setIndex(new THREE.BufferAttribute(indices, 1));
 
 // Crear escena y agregar geometría personalizada
 var scene = new THREE.Scene();
-scene.add( new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) );
+var scene = new THREE.Scene();
+var cubo = new THREE.Mesh( geometry, new THREE.LineBasicMaterial ( { color: 0xffffff } ) );
+var cubo1 = new THREE.Mesh( geometry, new THREE.LineBasicMaterial ( { color: 0x16FFFB } ) );
+var cubo2 = new THREE.Mesh( geometry, new THREE.LineBasicMaterial ( { color: 0xBC16FF } ) );
+cubo1.translateX(-7)
+cubo1.translateZ(-7)
+cubo2.translateX(7)
+cubo2.translateZ(7)
+
+// Crear una luz puntual de color blanco
+var light = new THREE.PointLight(0xffffff, 1);
+
+// Establecer la posición de la luz
+light.position.set(0, 10, 0);
 
 // Crear cámara ortográfica
-var cameraOrtografica = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
-cameraOrtografica.position.z = 15;
+var width = window.innerWidth;
+var height = window.innerHeight;
+var aspectRatio = width / height;
+
+var size = 5;
+var cameraOrtografica = new THREE.OrthographicCamera(-size * aspectRatio, size * aspectRatio, size, -size, 0.1, 1000);
+cameraOrtografica.position.set(0, 0, 15);
+cameraOrtografica.lookAt(0, 0, 0);
+
+// Añadir los cubos a la escena
+scene.add(cubo, cubo1, cubo2);
 
 // Crear renderizador y añadir a DOM
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-
-// Función para animar la geometría
-function animate() 
-{
-    requestAnimationFrame( animate );
-    // Actualizar la posición de la cámara en base al movimiento del mouse
-    cameraOrtografica.lookAt( scene.position );
-    // Renderizar la escena con la cámara actual
-    renderer.render( scene, cameraOrtografica );
- }
-
-// Iniciar la animación
-animate();
+renderer.render(scene, cameraOrtografica);
